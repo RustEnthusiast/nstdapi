@@ -16,25 +16,26 @@ pub fn nstdapi(_: TokenStream, item: TokenStream) -> TokenStream {
             Item::Fn(mut f) => {
                 f.attrs.push(parse_quote!(#[no_mangle]));
                 f.sig.abi = parse_quote!(extern "C");
-                f.into_token_stream().into()
+                f.into_token_stream()
             }
             Item::Static(mut s) => {
                 s.attrs.push(parse_quote!(#[no_mangle]));
-                s.into_token_stream().into()
+                s.into_token_stream()
             }
             Item::Struct(mut s) => {
                 s.attrs.push(parse_quote!(#[repr(C)]));
-                s.into_token_stream().into()
+                s.into_token_stream()
             }
             Item::Enum(mut e) => {
                 e.attrs.push(parse_quote!(#[repr(C)]));
-                e.into_token_stream().into()
+                e.into_token_stream()
             }
             Item::Union(mut u) => {
                 u.attrs.push(parse_quote!(#[repr(C)]));
-                u.into_token_stream().into()
+                u.into_token_stream()
             }
-            input => input.into_token_stream().into(),
+            input => input.into_token_stream(),
         }
+        .into()
     }
 }
