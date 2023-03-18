@@ -11,31 +11,18 @@ pub fn nstdapi(_: TokenStream, item: TokenStream) -> TokenStream {
     {
         use quote::ToTokens;
         use syn::{parse_quote, Item};
-        let input = syn::parse(item).expect("failed to parse an item with `nstdapi`");
-        match input {
-            Item::Fn(mut f) => {
+        let mut input = syn::parse(item).expect("failed to parse an item with `nstdapi`");
+        match &mut input {
+            Item::Fn(f) => {
                 f.attrs.push(parse_quote!(#[no_mangle]));
                 f.sig.abi = parse_quote!(extern "C");
-                f.into_token_stream()
             }
-            Item::Static(mut s) => {
-                s.attrs.push(parse_quote!(#[no_mangle]));
-                s.into_token_stream()
-            }
-            Item::Struct(mut s) => {
-                s.attrs.push(parse_quote!(#[repr(C)]));
-                s.into_token_stream()
-            }
-            Item::Enum(mut e) => {
-                e.attrs.push(parse_quote!(#[repr(C)]));
-                e.into_token_stream()
-            }
-            Item::Union(mut u) => {
-                u.attrs.push(parse_quote!(#[repr(C)]));
-                u.into_token_stream()
-            }
-            input => input.into_token_stream(),
+            Item::Static(s) => s.attrs.push(parse_quote!(#[no_mangle])),
+            Item::Struct(s) => s.attrs.push(parse_quote!(#[repr(C)])),
+            Item::Enum(e) => e.attrs.push(parse_quote!(#[repr(C)])),
+            Item::Union(u) => u.attrs.push(parse_quote!(#[repr(C)])),
+            _ => {}
         }
-        .into()
+        input.into_token_stream().into()
     }
 }
